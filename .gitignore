@@ -2,4 +2,5 @@ node_modules
 config.json
 google_credentials.json
 screenshot.png
-data
+end.png
+data/*

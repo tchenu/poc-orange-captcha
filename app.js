@@ -15,7 +15,7 @@ log("Langage : " + chalk.bold.red(config.langage))
 
 try {
     (async () => {
-        const browser = await puppeteer.launch()
+        const browser = await puppeteer.launch({headless: false})
         const page = await browser.newPage()
         await page.setUserAgent(config.userAgent);
         await page.goto('https://mdp.orange.fr/ident')
@@ -32,6 +32,10 @@ try {
         })
 
         log(chalk.blue('I got some informations'))
+        
+        // login input (phone number or email)
+        const element = await page.$('#login-input')
+        await element.type(config.login)
 
         await page.screenshot({path: 'screenshot.png'})
 
@@ -54,38 +58,47 @@ try {
             analyzePicture('data/0.png'), 
             analyzePicture('data/1.png'),
             analyzePicture('data/2.png'),
+            analyzePicture('data/3.png'),
+            analyzePicture('data/4.png'),
+            analyzePicture('data/5.png'),
+            analyzePicture('data/6.png'),
+            analyzePicture('data/7.png'),
+            analyzePicture('data/8.png')
         ]).then((data) => {
             analyzes = data
         })
 
         log(chalk.blue('The photos were analyzed...'))
 
-        let captchas = []
+        let clicks = []
 
-        // association between words and analyze
-        await Promise.all(words.map((word, index) => {
-            return new Promise((resolve, reject) => {
-                // pour chaque mot et pour chaque image
-                analyzes.map((analyze, index)  => {
-                    // pour chaque mot dans une image
-                    try {
-
-                        analyze['data/' + index + '.png'].forEach((predict, i) => {
-                            if (predict == word) {
-                                console.log(predict + ' correspond à ' + index)
-                                resolve(predict + ' correspond à ' + index)
-                            }
-                        })
-                    } catch (e) {
-                        console.log(word + " aucune correspondance")
-                    }                
+        await Promise.all(analyzes.map((analyze, index) => {
+            return new Promise(resolve => {
+                let found = false
+                analyze[index].words.map((predict, i) => {
+                    words.map((word, j) => {
+                        if (predict.includes(word)) {
+                            clicks[word] = index
+                        }
+                    })
                 })
+
+                resolve()
             })
         }))
 
-        log('ok')
+        log(clicks)
+
+        let clicksList = []
+
+        words.map(async (word, index) => {
+
+        }) 
+
+        await page.screenshot({path: 'end.png'})
+        log('Terminé')
         
-        await browser.close()
+        // await browser.close()
     })()
 } catch (e) {
     console.log(e.message)
@@ -125,7 +138,29 @@ function analyzePicture(picturePath) {
                 })
             }))
 
-            resolve({ [picturePath]: words })
+            resolve({ [picturePath.substring(5, 6)]: {"words": words} })
         })()
     })
 }
+
+/*
+
+            const promise = await new Promise(async (resolve, reject) => {
+                if (clicks[word] == 'undefined') {
+                    reject('Click not found')
+                }
+
+                let position = clicks[word] + 1
+
+                log({ 'word': word, 'image': position })
+
+                const element = await page.$('#captcha-image-' + position)
+
+                if (element == null) {
+                    reject('Error for the following word :' + word)
+                } else {
+                    await element.click()
+                    resolve('Success click for ' + word)
+                }
+            })
+*/
