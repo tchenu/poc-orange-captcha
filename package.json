@@ -1,0 +1,19 @@
+{
+  "name": "orange-captcha-break",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "init": "cp config.example.json config.json;echo config.json file created.",
+    "start": "GOOGLE_APPLICATION_CREDENTIALS=google_credentials.json node app.js"
+  },
+  "dependencies": {
+    "@google-cloud/translate": "^3.0.1",
+    "@google-cloud/vision": "^0.25.0",
+    "chalk": "^2.4.2",
+    "clarifai": "^2.9.0",
+    "fetch": "^1.1.0",
+    "puppeteer": "^1.14.0",
+    "request": "^2.88.0"
+  }
+}
