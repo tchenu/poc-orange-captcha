@@ -74,11 +74,10 @@ try {
 
         await Promise.all(analyzes.map((analyze, index) => {
             return new Promise(resolve => {
-                let found = false
                 analyze[index].words.map((predict, i) => {
                     words.map((word, j) => {
                         if (predict.includes(word)) {
-                            clicks[word] = index
+                            clicks[word] = index + 1
                         }
                     })
                 })
@@ -87,16 +86,17 @@ try {
             })
         }))
 
-        log(clicks)
+        for (i in words) {
+            const element = await page.$('#captcha-image-' + clicks[words[i]])
 
-        let clicksList = []
-
-        words.map(async (word, index) => {
-
-        }) 
-
+            if (element !== null) {
+                await element.click()
+            }
+        }
+        
         await page.screenshot({path: 'end.png'})
-        log('Terminé')
+
+        log(chalk.green('Success'))
         
         // await browser.close()
     })()
@@ -142,25 +142,3 @@ function analyzePicture(picturePath) {
         })()
     })
 }
-
-/*
-
-            const promise = await new Promise(async (resolve, reject) => {
-                if (clicks[word] == 'undefined') {
-                    reject('Click not found')
-                }
-
-                let position = clicks[word] + 1
-
-                log({ 'word': word, 'image': position })
-
-                const element = await page.$('#captcha-image-' + position)
-
-                if (element == null) {
-                    reject('Error for the following word :' + word)
-                } else {
-                    await element.click()
-                    resolve('Success click for ' + word)
-                }
-            })
-*/
