@@ -9,7 +9,9 @@ NodeJS application allowing to solve the captchas of the Orange telephone operat
 
 # Run PoC
 
-> npm runstart (or *yarn run start*)
+> npm run start (or *yarn run start*)
+
+![output](doc/success-output.png)
 
 ## Video
 [![Demo](http://img.youtube.com/vi/o-rRgzWfoec/0.jpg)](http://www.youtube.com/watch?v=o-rRgzWfoec)
