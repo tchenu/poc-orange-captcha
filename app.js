@@ -18,7 +18,7 @@ try {
         const browser = await puppeteer.launch({headless: false})
         const page = await browser.newPage()
         await page.setUserAgent(config.userAgent);
-        await page.goto('https://mdp.orange.fr/ident')
+        await page.goto(config.url)
         await page.waitFor(1000) // wait pictures from loading
 
         let infos = await page.evaluate(() => {
@@ -30,8 +30,6 @@ try {
 
             return { photos: photos, words: document.getElementById('captcha-indications').textContent }
         })
-
-        log(chalk.blue('I got some informations'))
         
         // login input (phone number or email)
         const element = await page.$('#login-input')
@@ -44,11 +42,11 @@ try {
             .replace(' ', '') // tricky
             .split(' ')
 
-        log(chalk.blue('Words list : ' + words))
+        log(chalk.blue('🔤   Words list : ' + words))
         
         // download all pictures
         await downloadAllPictures(infos.photos).then(() => {
-            log(chalk.green.bold('Pictures saved.'))
+            log(chalk.yellow('💾   Pictures saved (data/)'))
         }).then(await page.waitFor(1000))
         
         // analyze 
@@ -68,7 +66,7 @@ try {
             analyzes = data
         })
 
-        log(chalk.blue('The photos were analyzed...'))
+        log(chalk.yellow('🕵️‍   The photos were analyzed'))
 
         let clicks = []
 
@@ -86,19 +84,30 @@ try {
             })
         }))
 
+        let clicksCounter = 0
+
         for (i in words) {
             const element = await page.$('#captcha-image-' + clicks[words[i]])
 
             if (element !== null) {
+                clicksCounter++
+                log(chalk.blue('Click on : ') + chalk.italic(words[i]))
                 await element.click()
             }
         }
         
         await page.screenshot({path: 'end.png'})
-
-        log(chalk.green('Success'))
         
-        // await browser.close()
+        log('====== Results 🏁  ======')
+
+        if (clicksCounter == 6) {
+            log(chalk.green.bold('Success 6/6'))
+        } else {
+            log(chalk.red.bold(`Failed with : ${clicksCounter} / 6`))
+        }
+
+        await page.waitFor(5000)
+        await browser.close()
     })()
 } catch (e) {
     console.log(e.message)
