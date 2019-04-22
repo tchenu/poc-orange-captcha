@@ -5,11 +5,11 @@ NodeJS application allowing to solve the captchas of the Orange telephone operat
 
 > npm install (or *yarn install*)
 
-> npm init (or *yarn run init*)
+> npm run init (or *yarn run init*)
 
 # Run PoC
 
-> npm start (or *yarn start*)
+> npm runstart (or *yarn run start*)
 
 ## Video
 [![Demo](http://img.youtube.com/vi/o-rRgzWfoec/0.jpg)](http://www.youtube.com/watch?v=o-rRgzWfoec)
